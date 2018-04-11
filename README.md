@@ -8,7 +8,7 @@
 <img src="./images/project_vid.gif" width = "720">
 </p>
 
-Video link:  [result](https://www.youtube.com)
+Video link:  [result](https://www.youtube.com/watch?v=fPLCK274q68)
 ## Introduction
 
 The goal of this project is to implement Model Predictive Control in C++ to drive the car around the track using a simple Global Kinematic Model. Parameters were tuned in order to reach maximal speed. The Udacity-provided simulator communicates telemetry and track waypoint data via websocket and the application sends steering and acceleration commands back to the simulator. The solution is robust to 100ms latency, as one may encounter in real-world application.
