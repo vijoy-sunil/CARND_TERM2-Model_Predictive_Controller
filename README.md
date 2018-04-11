@@ -1,3 +1,6 @@
+[img1]: ./images/img1.PNG
+[img2]: ./images/img2.PNG
+
 ## Project: Model Predicitive Controller
 [![Udacity - Self-Driving Car NanoDegree](https://s3.amazonaws.com/udacity-sdc/github/shield-carnd.svg)](http://www.udacity.com/drive)
 
@@ -8,13 +11,39 @@
 Video link:  [result](https://www.youtube.com)
 ## Introduction
 
+The goal of this project is to implement Model Predictive Control in C++ to drive the car around the track using a simple Global Kinematic Model. Parameters were tuned in order to reach maximal speed. The Udacity-provided simulator communicates telemetry and track waypoint data via websocket and the application sends steering and acceleration commands back to the simulator. The solution is robust to 100ms latency, as one may encounter in real-world application.
+
+This project makes use of the IPOPT and CPPAD libraries to calculate an optimal trajectory and its associated actuation commands in order to minimize error with a third-degree polynomial fit to the given waypoints. The optimization considers only a short duration's worth of waypoints, and produces a trajectory for that duration based upon a model of the vehicle's kinematics and a cost function based mostly on the vehicle's cross-track error (roughly the distance from the track waypoints) and orientation angle error, with other cost factors included to improve performance.
+
 ## The Model
+
+The kinematic model includes the vehicle's x and y coordinates, orientation angle (psi), and velocity, as well as the cross-track error and psi error (epsi). Actuator outputs are acceleration and delta (steering angle). The model combines the state and actuations from the previous timestep to calculate the state for the current timestep based on the equations below:
+
+![alt text][img1]
+
+Stearing angle (δ) should be in range [-25,25] deg. For simplicity the throttle and brake represented as a singular actuator (a), with negative values signifying braking and positive values signifying acceleration. It should be in range [-1,1]. Cross track error (cte) and ψ error (eψ) were used to build the cost function for the MPC. They could be updated on a new time step using the following equations:
+
+![alt text][img2]
+
+Lf measures the distance between the front of the vehicle and its center of gravity. The parameter was provided by Udacity.
+
 
 ## Timestep Length and Elapsed Duration (N & dt)
 
+The time horizon (T) was chosen to 1 s after experiments. It was shown that the MPC could drive safely around the track with T = 1 s. Time step duration (dt) was set equal to the latancy of the simulation (0.1 s), hense, 10 time steps (N) was used. The cost function parameters were tuned by try-and-error method.
+
 ## Polynomial Fitting and MPC Preprocessing
 
+The waypoints are transformed into the vehicle coordinate space and a 3d order polynomial was fitted to the data. This simplifies the process to fit a polynomial to the waypoints because the vehicle's x and y coordinates are now at the origin (0, 0) and the orientation angle is also zero.
+
+The latency was introduced to simulate real delay of a human driver or physical actuators in case of a self driving car. Cross track error and orientation error were calculated and then passed into the MPC Solver.
+
 ## Model Predictive Control with Latency
+
+The original kinematic equations depend upon the actuations from the previous timestep, but with a delay of 100ms the actuations are applied another timestep later, so the equations have been altered to account for this.
+
+Also, in addition to the cost functions suggested in the lessons (punishing CTE, epsi, difference between velocity and a reference velocity, delta, acceleration, change in delta, and change in acceleration) an additional cost penalizing the combination of velocity and delta was included and results in much more controlled cornering.
+
 ---
 
 ## Dependencies
