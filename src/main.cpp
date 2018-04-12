@@ -92,8 +92,8 @@ int main() {
           double psi = j[1]["psi"];
           double v = j[1]["speed"];
 
-          double steering_angle = j[1]["steering_angle"];
-          double throttle = j[1]["throttle"];
+          double delta = j[1]["steering_angle"];
+          double a = j[1]["throttle"];
 
           int N = ptsx.size(); // Number of waypoints
           size_t i;
@@ -104,40 +104,52 @@ int main() {
           *
           */
           // Convert waypoints to the vehicle coordinate system
-          vector<double> waypoints_x;
-          vector<double> waypoints_y;
-
-          for(int i = 0; i < N; i++) {
-            double dx = ptsx[i] - px;
-            double dy = ptsy[i] - py;
-            waypoints_x.push_back(dx * cos(-psi) - dy * sin(-psi));
-            waypoints_y.push_back(dx * sin(-psi) + dy * cos(-psi));
+          Eigen::VectorXd ptsx_car(ptsx.size());
+          Eigen::VectorXd ptsy_car(ptsy.size());
+          
+          // Transform the points to the vehicle's orientation
+          for (int i = 0; i < ptsx.size(); i++) {
+            double x = ptsx[i] - px;
+            double y = ptsy[i] - py;
+            ptsx_car[i] = x * cos(-psi) - y * sin(-psi);
+            ptsy_car[i] = x * sin(-psi) + y * cos(-psi);
           }
 
-          //convert from std::vector<double> to Eigen::VectorXd
-          double* ptrx = &waypoints_x[0];
-          double* ptry = &waypoints_y[0];
-          Eigen::Map<Eigen::VectorXd> waypoints_x_eig(ptrx, 6);
-          Eigen::Map<Eigen::VectorXd> waypoints_y_eig(ptry, 6);
-
           //get reference trajectory
-          auto coeffs = polyfit(waypoints_x_eig, waypoints_y_eig, 3);
+          auto coeffs = polyfit(ptsx_car, ptsy_car, 3);
           double cte = polyeval(coeffs, 0);
           double epsi = -atan(coeffs[1]); 
-
+		  
+          // Center of gravity needed related to psi and epsi
+          const double Lf = 2.67;
+          
+          // Latency for predicting time at actuation
+          const double dt = 0.1;
 
           Eigen::VectorXd state(6);
-          state << 0, 0, 0, v, cte, epsi;
+          // Predict state after latency
+          // x, y and psi are all zero after transformation above
+          double pred_px = 0.0 + v * dt; // Since psi is zero, cos(0) = 1
+          const double pred_py = 0.0; // Since sin(0) = 0, y stays as 0 (y + v * 0 * dt)
+          double pred_psi = 0.0 + v * -delta / Lf * dt;
+          double pred_v = v + a * dt;
+          double pred_cte = cte + v * sin(epsi) * dt;
+          double pred_epsi = epsi + v * -delta / Lf * dt;
+		  
+          state << pred_px, pred_py, pred_psi, pred_v, pred_cte, pred_epsi;
 
           auto vars = mpc.Solve(state, coeffs);
-          steering_angle = vars[0];
-          throttle = vars[1];
+          // Calculate steering and throttle
+          // Steering must be divided by deg2rad(25) to normalize within [-1, 1].
+          // Multiplying by Lf takes into account vehicle's turning ability
+          double steer_value = vars[0] / (deg2rad(25) * Lf);
+          double throttle_value = vars[1];
 
           json msgJson;
           // NOTE: Remember to divide by deg2rad(25) before you send the steering value back.
           // Otherwise the values will be in between [-deg2rad(25), deg2rad(25] instead of [-1, 1].
-          msgJson["steering_angle"] = steering_angle/(deg2rad(25));
-          msgJson["throttle"] = throttle;
+          msgJson["steering_angle"] = steer_value;
+          msgJson["throttle"] = throttle_value;
 
 
           //Display the MPC predicted trajectory
@@ -159,9 +171,9 @@ int main() {
           // the points in the simulator are connected by a Yellow line
           vector<double> next_x_vals;
           vector<double> next_y_vals;
-          for(i = 0; i<ptsx.size();i++){
-            next_x_vals.push_back(waypoints_x[i]);
-            next_y_vals.push_back(waypoints_y[i]);
+          for(i = 0; i<N;i++){
+            next_x_vals.push_back(ptsx_car[i]);
+            next_y_vals.push_back(ptsy_car[i]);
           }
 
           msgJson["next_x"] = next_x_vals;

@@ -6,5 +6,5 @@ CXX_FLAGS = -Wall   -std=c++11 -O3
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/usr/local/include -I/home/vijoy/Desktop/UDACITY/CarND-MPC-Project/src/Eigen-3.3 
+CXX_INCLUDES = -I/usr/local/include -I/mnt/c/Users/VIJOY-PC/Desktop/UDACITY/CARND_TERM2-Model_Predictive_Controller/src/Eigen-3.3 
 

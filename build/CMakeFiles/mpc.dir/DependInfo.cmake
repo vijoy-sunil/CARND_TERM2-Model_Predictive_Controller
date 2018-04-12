@@ -4,8 +4,8 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/vijoy/Desktop/UDACITY/CarND-MPC-Project/src/MPC.cpp" "/home/vijoy/Desktop/UDACITY/CarND-MPC-Project/build/CMakeFiles/mpc.dir/src/MPC.cpp.o"
-  "/home/vijoy/Desktop/UDACITY/CarND-MPC-Project/src/main.cpp" "/home/vijoy/Desktop/UDACITY/CarND-MPC-Project/build/CMakeFiles/mpc.dir/src/main.cpp.o"
+  "/mnt/c/Users/VIJOY-PC/Desktop/UDACITY/CARND_TERM2-Model_Predictive_Controller/src/MPC.cpp" "/mnt/c/Users/VIJOY-PC/Desktop/UDACITY/CARND_TERM2-Model_Predictive_Controller/build/CMakeFiles/mpc.dir/src/MPC.cpp.o"
+  "/mnt/c/Users/VIJOY-PC/Desktop/UDACITY/CARND_TERM2-Model_Predictive_Controller/src/main.cpp" "/mnt/c/Users/VIJOY-PC/Desktop/UDACITY/CARND_TERM2-Model_Predictive_Controller/build/CMakeFiles/mpc.dir/src/main.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

@@ -58,19 +58,19 @@ class FG_eval {
     // TODO: Define the cost related the reference state and
     // any anything you think may be beneficial.
     for (i = 0; i < N; i++) {
-      fg[0] += 3000*CppAD::pow(vars[cte_start + i], 2);
-      fg[0] += 3000*CppAD::pow(vars[epsi_start + i], 2);
+      fg[0] += 2000*CppAD::pow(vars[cte_start + i], 2);
+      fg[0] += 2000*CppAD::pow(vars[epsi_start + i], 2);
       fg[0] += CppAD::pow(vars[v_start + i] - ref_v, 2);
     }
 
     for (i = 0; i < N - 1; i++) {
-      fg[0] += 5*CppAD::pow(vars[delta_start + i], 2);
-      fg[0] += 5*CppAD::pow(vars[a_start + i], 2);
-      fg[0] += 700*CppAD::pow(vars[delta_start + i] * vars[v_start+i], 2);
+      fg[0] += 10*CppAD::pow(vars[delta_start + i], 2);
+      fg[0] += 10*CppAD::pow(vars[a_start + i], 2);
+      //fg[0] += 70*CppAD::pow(vars[delta_start + i] * vars[v_start+i], 2);
     }
 
     for (i = 0; i < N - 2; i++) {
-      fg[0] += 200*CppAD::pow(vars[delta_start + i + 1] - vars[delta_start + i], 2);
+      fg[0] += 100*CppAD::pow(vars[delta_start + i + 1] - vars[delta_start + i], 2);
       fg[0] += 10*CppAD::pow(vars[a_start + i + 1] - vars[a_start + i], 2);
     }
 
@@ -96,22 +96,28 @@ class FG_eval {
     for (t = 1; t < N; t++) {
       AD<double> x1 = vars[x_start + t];
       AD<double> x0 = vars[x_start + t - 1];
+	  
       AD<double> y1 = vars[y_start + t];
       AD<double> y0 = vars[y_start + t - 1];
+	  
       AD<double> psi1 = vars[psi_start + t];
       AD<double> psi0 = vars[psi_start + t - 1];
+	  
       AD<double> v1 = vars[v_start + t];
       AD<double> v0 = vars[v_start + t - 1];
+	  
       AD<double> cte1 = vars[cte_start + t];
       AD<double> cte0 = vars[cte_start + t - 1];
+	  
       AD<double> epsi1 = vars[epsi_start + t];
       AD<double> epsi0 = vars[epsi_start + t - 1];
+	  
       AD<double> a = vars[a_start + t - 1];
       AD<double> delta = vars[delta_start + t - 1];
-      if (t > 1) {   // use previous actuations (to account for latency)
-        a = vars[a_start + t - 2];
-        delta = vars[delta_start + t - 2];
-      }
+      //if (t > 1) {   // use previous actuations (to account for latency)
+      // a = vars[a_start + t - 2];
+      //  delta = vars[delta_start + t - 2];
+      //}
       AD<double> f0 = coeffs[0] + coeffs[1] * x0 + coeffs[2] * CppAD::pow(x0, 2) + coeffs[3] * CppAD::pow(x0, 3);
       AD<double> psides0 = CppAD::atan(coeffs[1] + 2 * coeffs[2] * x0 + 3 * coeffs[3] * CppAD::pow(x0, 2));
 

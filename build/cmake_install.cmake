@@ -1,4 +1,4 @@
-# Install script for directory: /home/vijoy/Desktop/UDACITY/CarND-MPC-Project
+# Install script for directory: /mnt/c/Users/VIJOY-PC/Desktop/UDACITY/CARND_TERM2-Model_Predictive_Controller
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -40,5 +40,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/vijoy/Desktop/UDACITY/CarND-MPC-Project/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/mnt/c/Users/VIJOY-PC/Desktop/UDACITY/CARND_TERM2-Model_Predictive_Controller/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
